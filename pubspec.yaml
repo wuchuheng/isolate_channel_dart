@@ -4,7 +4,7 @@ version: 0.0.1
 homepage: https://github.com/wuchuheng/isolate_channel_dart.git
 
 environment:
-  sdk: '>=2.17.7 <3.0.0'
+  sdk: '>=2.17.6 <3.0.0'
 
 dependencies:
   wuchuheng_hooks: ^0.0.3
