@@ -44,7 +44,7 @@ class Channel implements ChannelAbstract {
   void onClose(Function(String name) callback) => onCloseCallbackList.add(callback);
 
   @override
-  Listen listen(Function(String messagel, ChannelAbstract channel) callback) {
+  Listen listen(Function(String message, ChannelAbstract channel) callback) {
     final id = DateTime.now().microsecondsSinceEpoch;
     _idMapCallback[id] = callback;
     return Listen(() {
