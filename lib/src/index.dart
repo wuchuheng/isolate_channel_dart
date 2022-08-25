@@ -25,34 +25,33 @@ Future<Task> IsolateTask(IsolateSubjectCallback callback) async {
       callback(message.data, sender(isolateSendPort, message));
     }
   }, receivePort.sendPort);
-  return await Task().init(receivePort);
+
+  final Task task = Task(receivePort);
+  bool isFirst = false;
+  final sendPortSubject = SubjectHook<SendPort>();
+  task.receivePort.listen((value) {
+    if (!isFirst) {
+      isFirst = true;
+      sendPortSubject.next(value as SendPort);
+    } else {
+      final message = Message.fromJson(jsonDecode(value));
+      if (task.channelIdMapCallback.containsKey(message.channelId)) {
+        task.channelIdMapCallback[message.channelId]!(message.data, (String str) {
+          task.sendPort.send(jsonEncode(Message(data: str, channelId: message.channelId)));
+        });
+      }
+    }
+  });
+  task.sendPort = await sendPortSubject.toPromise();
+  return task;
 }
 
 class Task {
-  Map<int, Function(String message, Sender sender)> channelIdMapCallback = {};
-  late final SendPort sendPort;
-  late final ReceivePort receivePort;
+  late SendPort sendPort;
+  final ReceivePort receivePort;
+  late Map<int, Function(String message, Sender sender)> channelIdMapCallback = {};
 
-  init(ReceivePort receivePort) async {
-    this.receivePort = receivePort;
-    bool isFirst = false;
-    final sendPortSubject = SubjectHook<SendPort>();
-    receivePort.listen((value) {
-      if (!isFirst) {
-        isFirst = true;
-        sendPortSubject.next(value as SendPort);
-      } else {
-        final message = Message.fromJson(jsonDecode(value));
-        if (channelIdMapCallback.containsKey(message.channelId)) {
-          channelIdMapCallback[message.channelId]!(message.data, (String str) {
-            sendPort.send(jsonEncode(Message(data: str, channelId: message.channelId)));
-          });
-        }
-      }
-    });
-    sendPort = await sendPortSubject.toPromise();
-    return this;
-  }
+  Task(this.receivePort);
 
   Channel listen(Function(String message, Sender sender) callback) {
     final channelId = DateTime.now().microsecondsSinceEpoch;
