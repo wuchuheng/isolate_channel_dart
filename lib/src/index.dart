@@ -1,6 +1,5 @@
 // TODO: Put public facing types in this file.
 
-import 'dart:convert';
 import 'dart:isolate';
 
 import 'package:wuchuheng_isolate_subject/src/dto/message/index.dart';
@@ -21,21 +20,20 @@ Future<Task> IsolateTask(IsolateSubjectCallback callback) async {
     isolateSendPort.send(isolateReceivePort.sendPort);
     Map<int, Channel> idMapChannel = {};
     await for (var messageJson in isolateReceivePort) {
-      final message = Message.fromJson(jsonDecode(messageJson));
+      final Message message = messageJson;
       if (!idMapChannel.containsKey(message.channelId)) {
         final channel = Channel(
+          name: message.name,
           channelId: message.channelId,
           close: () {
             if (idMapChannel.containsKey(message.channelId)) {
-              isolateSendPort.send(jsonEncode(Message(channelId: message.channelId, dataType: DataType.CLOSE)));
+              isolateSendPort.send(Message(channelId: message.channelId, dataType: DataType.CLOSE, name: message.name));
               idMapChannel.remove(message.channelId);
             }
           },
           send: (String newMessage) {
             isolateSendPort.send(
-              jsonEncode(
-                Message(channelId: message.channelId, dataType: DataType.DATA, data: newMessage),
-              ),
+              Message(channelId: message.channelId, dataType: DataType.DATA, data: newMessage, name: message.name),
             );
           },
         );
@@ -61,7 +59,7 @@ Future<Task> IsolateTask(IsolateSubjectCallback callback) async {
       isFirst = true;
       sendPortSubject.next(value as SendPort);
     } else {
-      final message = Message.fromJson(jsonDecode(value));
+      final message = value;
       if (task.channelIdMapCallback.containsKey(message.channelId)) {
         final channel = task.idMapChannel[message.channelId]!;
         switch (message.dataType) {
@@ -90,26 +88,23 @@ class Task {
 
   Task(this.receivePort);
 
-  Channel listen(Function(String message, Channel channel) callback) {
+  Channel listen(Function(String message, Channel channel) callback, [String name = '']) {
     final channelId = DateTime.now().microsecondsSinceEpoch;
     channelIdMapCallback[channelId] = callback;
     final channel = Channel(
+      name: name,
       channelId: channelId,
       close: () {
         if (channelIdMapCallback.containsKey(channelId)) {
+          sendPort.send(Message(channelId: channelId, dataType: DataType.CLOSE, name: name));
           channelIdMapCallback.remove(channelId);
-          final data = Message(
-            channelId: channelId,
-            dataType: DataType.CLOSE,
-          );
-          sendPort.send(jsonEncode(data));
           idMapChannel.remove(channelId);
         }
       },
       send: (String message) {
         if (channelIdMapCallback.containsKey(channelId)) {
-          final data = Message(channelId: channelId, data: message, dataType: DataType.DATA);
-          sendPort.send(jsonEncode(data));
+          final data = Message(channelId: channelId, data: message, dataType: DataType.DATA, name: name);
+          sendPort.send(data);
         }
       },
     );

@@ -11,7 +11,7 @@ typedef SenderFunc = Function(String message) Function(
 final SenderFunc sender = (SendPort sendPort, Message message) {
   return (String newMessage) {
     final str = jsonEncode(
-      Message(channelId: message.channelId, data: newMessage),
+      Message(channelId: message.channelId, data: newMessage, name: message.name),
     );
     sendPort.send(str);
   };

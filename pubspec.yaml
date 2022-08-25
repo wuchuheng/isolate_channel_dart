@@ -1,12 +1,13 @@
 name: wuchuheng_isolate_subject
 description: A starting point for Dart libraries or applications.
-version: 1.0.0
-# homepage: https://www.example.com
+version: 0.0.1
+homepage: https://www.example.com
 
 environment:
   sdk: '>=2.18.0-271.4.beta <3.0.0'
 
-#dependencies:
+dependencies:
+  wuchuheng_hooks: ^0.0.3
 
 dev_dependencies:
   json_serializable: ^6.3.1

@@ -1,27 +1,50 @@
+import 'dart:async';
+
 import 'package:test/test.dart';
 import 'package:wuchuheng_isolate_subject/src/dto/subscription/index.dart';
+import 'package:wuchuheng_isolate_subject/src/util/subject_hook.dart';
 import 'package:wuchuheng_isolate_subject/wuchuheng_isolate_subject.dart';
 import 'package:wuchuheng_logger/wuchuheng_logger.dart';
 
 void main() {
   group('A group of tests', () {
-    test('First Test', () async {
-      final channel1Data = 'channel1Data';
-      final channel2Data = 'channel2Data';
-      final Task task = await IsolateTask((message, channel) {
+    test('Data transfer Test', () async {
+      final Task task = await IsolateTask((message, Channel channel) {
+        Logger.info('channel name: ${channel.name}');
         Logger.info('server: receive $message');
         channel.send('task data');
       });
-      final Channel channel1 = task.listen((message, sender) {
-        Logger.info('channel1: receive $message');
+      final channel = task.listen((message, channel) {
+        expect(message, 'task data');
+      }, 'task');
+      channel.send('channelData');
+      await Future.delayed(Duration(seconds: 1));
+    }, timeout: Timeout(Duration(seconds: 100)));
+    test('close event Test', () async {
+      final Task task = await IsolateTask((message, channel) {
+        Logger.info('server: receive $message');
+        channel.close();
       });
-      final Channel channel2 = task.listen((message, sender) {
-        Logger.info('client2: receive $message');
-      });
-      channel1.send(channel1Data);
-      channel2.send(channel2Data);
-
-      await Future.delayed(Duration(seconds: 2));
-    });
+      final channel = task.listen((message, channel) {});
+      channel.send('channelData');
+      final subject = SubjectHook<bool>();
+      channel.onClose(() => subject.next(true));
+      expect(await subject.toPromise(), true);
+      await Future.delayed(Duration(seconds: 1));
+    }, timeout: Timeout(Duration(seconds: 100)));
+    test('Logic segregation Test', () async {
+      final Task task = await IsolateTask(compute);
+      final channel = task.listen((message, channel) {});
+      channel.send('channelData');
+      final subject = SubjectHook<bool>();
+      channel.onClose(() => subject.next(true));
+      expect(await subject.toPromise(), true);
+      await Future.delayed(Duration(seconds: 1));
+    }, timeout: Timeout(Duration(seconds: 100)));
   });
+}
+
+void compute(String message, Channel channel) {
+  Logger.info('server: receive $message');
+  channel.close();
 }

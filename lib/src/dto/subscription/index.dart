@@ -2,9 +2,11 @@ class Channel {
   late final Function() _close;
   final int channelId;
   late final Function(String message) _send;
-  List<Function> onCloseCallbackList = [];
+  final List<Function> onCloseCallbackList = [];
+  final String name;
 
   Channel({
+    required this.name,
     required this.channelId,
     required Function() close,
     required Function(String message) send,
@@ -13,7 +15,7 @@ class Channel {
     _send = send;
   }
 
-  void unsubscribe() => _close();
+  void close() => _close();
 
   void send(String message) => _send(message);
 

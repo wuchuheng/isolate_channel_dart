@@ -12,10 +12,12 @@ class Message {
   final String data;
   final int channelId;
   final DataType dataType;
+  final String name;
 
   Message({
     this.data = '',
     required this.channelId,
+    required this.name,
     this.dataType = DataType.DATA,
   });
 
