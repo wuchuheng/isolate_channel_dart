@@ -1,5 +1,5 @@
-import 'package:wuchuheng_isolate_subject/src/dto/listen/index.dart';
-import 'package:wuchuheng_isolate_subject/src/dto/message/index.dart';
+import '../../dto/listen/index.dart';
+import '../../dto/message/index.dart';
 
 abstract class ChannelAbstract {
   /// close the channel.

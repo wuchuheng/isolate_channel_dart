@@ -1,10 +1,11 @@
 import 'dart:isolate';
 
 import 'package:wuchuheng_hooks/wuchuheng_hooks.dart';
-import 'package:wuchuheng_isolate_subject/src/dto/message/index.dart';
-import 'package:wuchuheng_isolate_subject/src/service/channel/index.dart';
-import 'package:wuchuheng_isolate_subject/src/service/channel/index_abstract.dart';
-import 'package:wuchuheng_isolate_subject/src/service/task/index.dart';
+
+import 'dto/message/index.dart';
+import 'service/channel/index.dart';
+import 'service/channel/index_abstract.dart';
+import 'service/task/index.dart';
 
 typedef Sender = Function(String message);
 typedef IsolateSubjectCallback = Function(

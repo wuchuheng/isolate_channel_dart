@@ -1,6 +1,6 @@
 import 'dart:isolate';
 
-import 'package:wuchuheng_isolate_subject/src/service/task/index_abstract.dart';
+import 'package:wuchuheng_isolate_channel/src/service/task/index_abstract.dart';
 
 import '../channel/index.dart';
 

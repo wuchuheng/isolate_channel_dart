@@ -1,5 +1,5 @@
-import 'package:wuchuheng_isolate_subject/src/service/task/index.dart';
-import 'package:wuchuheng_isolate_subject/wuchuheng_isolate_subject.dart';
+import 'package:wuchuheng_isolate_channel/src/service/task/index.dart';
+import 'package:wuchuheng_isolate_channel/wuchuheng_isolate_channel.dart';
 import 'package:wuchuheng_logger/wuchuheng_logger.dart';
 
 void main() async {

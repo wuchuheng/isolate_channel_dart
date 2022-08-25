@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:isolate';
 
-import 'package:wuchuheng_isolate_subject/src/dto/message/index.dart';
+import 'package:wuchuheng_isolate_channel/src/dto/message/index.dart';
 
 typedef SenderFunc = Function(String message) Function(
   SendPort sendPort,
