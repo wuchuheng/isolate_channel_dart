@@ -10,7 +10,7 @@ void main() async {
   });
 
   ///Main thread code.
-  final channel = task.listen((message, channel) {
+  final channel = task.createChannel((message, channel) {
     Logger.info('The data from isolate logic: $message');
   });
   channel.send('Send data to isolate');
