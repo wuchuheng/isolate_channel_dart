@@ -1,9 +1,9 @@
-class Subscribe {
+class Channel {
   late final Function() _unsubscribe;
 
   late final Function(String message) _send;
 
-  Subscribe({
+  Channel({
     required Function() unsubscribe,
     required Function(String message) send,
   }) {

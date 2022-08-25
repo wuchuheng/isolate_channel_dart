@@ -15,7 +15,7 @@ typedef IsolateSubjectCallback = Function(
   Function(String message) sender,
 );
 
-Future<Subject> isolateSubject(IsolateSubjectCallback callback) async {
+Future<Task> IsolateTask(IsolateSubjectCallback callback) async {
   ReceivePort receivePort = ReceivePort();
   Isolate.spawn<SendPort>((SendPort isolateSendPort) async {
     ReceivePort isolateReceivePort = ReceivePort();
@@ -25,10 +25,10 @@ Future<Subject> isolateSubject(IsolateSubjectCallback callback) async {
       callback(message.data, sender(isolateSendPort, message));
     }
   }, receivePort.sendPort);
-  return await Subject().init(receivePort);
+  return await Task().init(receivePort);
 }
 
-class Subject {
+class Task {
   Map<int, Function(String message, Sender sender)> channelIdMapCallback = {};
   late final SendPort sendPort;
   late final ReceivePort receivePort;
@@ -54,10 +54,10 @@ class Subject {
     return this;
   }
 
-  Subscribe subscribe(Function(String message, Sender sender) callback) {
+  Channel listen(Function(String message, Sender sender) callback) {
     final channelId = DateTime.now().microsecondsSinceEpoch;
     channelIdMapCallback[channelId] = callback;
-    return Subscribe(
+    return Channel(
       unsubscribe: () {
         if (channelIdMapCallback.containsKey(channelId)) {
           channelIdMapCallback.remove(channelId);
