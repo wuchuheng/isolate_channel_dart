@@ -92,7 +92,7 @@ class Channel implements ChannelAbstract {
   void onError(Function(Exception e) callback) => _onErrorCallbackList.add(callback);
 
   @override
-  Future<String> toFuture() {
+  Future<String> listenToFuture() {
     Completer<String> completer = Completer();
     _toFutureCallback.add((message) => completer.complete(message));
 

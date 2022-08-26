@@ -23,5 +23,5 @@ abstract class ChannelAbstract {
   void onError(Function(Exception e) callback);
 
   /// messages to Future.
-  Future<String> toFuture();
+  Future<String> listenToFuture();
 }

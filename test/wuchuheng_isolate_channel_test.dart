@@ -59,6 +59,16 @@ void main() {
       await Future.delayed(Duration(seconds: 2));
       expect(isThrowError, true);
     }, timeout: Timeout(Duration(seconds: 3)));
+    test('ToFuture test', () async {
+      final task = await IsolateTask((message, channel) {
+        channel.send(message);
+      });
+      final channel = task.createChannel();
+      final result = channel.listenToFuture();
+      channel.send('OK');
+      await Future.delayed(Duration(seconds: 3));
+      expect(await result, 'OK');
+    });
   });
 }
 
