@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:isolate';
 
 import '../../dto/listen/index.dart';
@@ -7,19 +8,22 @@ import 'index_abstract.dart';
 class Channel implements ChannelAbstract {
   late final Function() _close;
   final int channelId;
-  final SendPort sendPort;
+  late final SendPort _sendPort;
   final List<Function(String name)> _onCloseCallbackList = [];
   final List<Function(Exception error)> _onErrorCallbackList = [];
+  final List<Function(String message)> _toFutureCallback = [];
+
   @override
   final String name;
   final Map<int, Function(String message, ChannelAbstract channel)> _idMapCallback = {};
 
   Channel({
-    required this.sendPort,
+    required SendPort sendPort,
     required this.name,
     required this.channelId,
     required Function() close,
   }) {
+    _sendPort = sendPort;
     _close = close;
   }
 
@@ -30,7 +34,7 @@ class Channel implements ChannelAbstract {
     }
     _onCloseCallbackList.clear();
     final data = Message(channelId: channelId, dataType: DataType.CLOSE, name: name);
-    sendPort.send(data);
+    _sendPort.send(data);
     _onErrorCallbackList.clear();
     _close();
   }
@@ -38,7 +42,7 @@ class Channel implements ChannelAbstract {
   @override
   void send(String message) {
     final data = Message(channelId: channelId, data: message, dataType: DataType.DATA, name: name);
-    sendPort.send(data);
+    _sendPort.send(data);
   }
 
   @override
@@ -68,9 +72,13 @@ class Channel implements ChannelAbstract {
           try {
             _idMapCallback[id]!(message.data, this);
           } on Exception catch (e) {
-            sendPort.send(Message(channelId: channelId, name: name, dataType: DataType.ERROR, exception: e));
+            _sendPort.send(Message(channelId: channelId, name: name, dataType: DataType.ERROR, exception: e));
           }
         }
+        for (var callback in _toFutureCallback) {
+          callback(message.data);
+        }
+        _toFutureCallback.clear();
         break;
       case DataType.ERROR:
         for (final callback in _onErrorCallbackList) {
@@ -82,4 +90,12 @@ class Channel implements ChannelAbstract {
 
   @override
   void onError(Function(Exception e) callback) => _onErrorCallbackList.add(callback);
+
+  @override
+  Future<String> toFuture() {
+    Completer<String> completer = Completer();
+    _toFutureCallback.add((message) => completer.complete(message));
+
+    return completer.future;
+  }
 }

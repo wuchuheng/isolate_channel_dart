@@ -19,5 +19,9 @@ abstract class ChannelAbstract {
   /// Trigger listening events.
   void onMessage(Message message);
 
+  /// Listening for exceptions.
   void onError(Function(Exception e) callback);
+
+  /// messages to Future.
+  Future<String> toFuture();
 }
