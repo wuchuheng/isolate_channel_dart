@@ -8,3 +8,5 @@
 ## 0.0.3
 - feat: Add exception feature.
 
+## 0.0.4
+- feat: Add listenToFuture method.'

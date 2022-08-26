@@ -18,4 +18,13 @@ void main() async {
 
   ///Turn off the channel
   channel.close();
+
+  /// listen to future
+  final task2 = await IsolateTask((message, channel) {
+    channel.send(message);
+  });
+  final channel2 = task2.createChannel();
+  final result = channel2.listenToFuture();
+  channel.send('OK');
+  print(await result); // print 2
 }
