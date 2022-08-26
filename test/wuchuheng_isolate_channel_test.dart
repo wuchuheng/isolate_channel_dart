@@ -41,6 +41,24 @@ void main() {
       expect(await subject.toFuture(), true);
       await Future.delayed(Duration(seconds: 1));
     }, timeout: Timeout(Duration(seconds: 100)));
+    test('Main thread listens for exceptions Test', () async {
+      final Task task = await IsolateTask((message, channel) {
+        if (channel.name == 'channel1') {
+          throw Exception('channel exception');
+        }
+      });
+      final channel1 = task.createChannel(name: 'channel1');
+      bool isThrowError = false;
+      channel1.onError((e) {
+        Logger.info(e.toString());
+        isThrowError = true;
+      });
+      final channel2 = task.createChannel(name: 'channel2');
+      channel2.send('channel2 data');
+      channel1.send('channel1 data');
+      await Future.delayed(Duration(seconds: 2));
+      expect(isThrowError, true);
+    }, timeout: Timeout(Duration(seconds: 3)));
   });
 }
 

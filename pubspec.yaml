@@ -1,6 +1,6 @@
 name: wuchuheng_isolate_channel
 description: This a library to simplify isolate thread communication.
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/wuchuheng/isolate_channel_dart.git
 
 environment:

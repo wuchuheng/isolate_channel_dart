@@ -8,7 +8,8 @@ class Channel implements ChannelAbstract {
   late final Function() _close;
   final int channelId;
   final SendPort sendPort;
-  final List<Function(String name)> onCloseCallbackList = [];
+  final List<Function(String name)> _onCloseCallbackList = [];
+  final List<Function(Exception error)> _onErrorCallbackList = [];
   @override
   final String name;
   final Map<int, Function(String message, ChannelAbstract channel)> _idMapCallback = {};
@@ -24,12 +25,13 @@ class Channel implements ChannelAbstract {
 
   @override
   void close() {
-    for (var callback in onCloseCallbackList) {
+    for (var callback in _onCloseCallbackList) {
       callback(name);
     }
-    onCloseCallbackList.clear();
+    _onCloseCallbackList.clear();
     final data = Message(channelId: channelId, dataType: DataType.CLOSE, name: name);
     sendPort.send(data);
+    _onErrorCallbackList.clear();
     _close();
   }
 
@@ -40,7 +42,7 @@ class Channel implements ChannelAbstract {
   }
 
   @override
-  void onClose(Function(String name) callback) => onCloseCallbackList.add(callback);
+  void onClose(Function(String name) callback) => _onCloseCallbackList.add(callback);
 
   @override
   Listen listen(Function(String message, ChannelAbstract channel) callback) {
@@ -55,17 +57,29 @@ class Channel implements ChannelAbstract {
   void onMessage(Message message) {
     switch (message.dataType) {
       case DataType.CLOSE:
-        onCloseCallbackList.forEach((callback) {
+        for (var callback in _onCloseCallbackList) {
           callback(name);
-        });
-        onCloseCallbackList.clear();
+        }
+        _onCloseCallbackList.clear();
         _close();
         break;
       case DataType.DATA:
         for (var id in _idMapCallback.keys) {
-          _idMapCallback[id]!(message.data, this);
+          try {
+            _idMapCallback[id]!(message.data, this);
+          } on Exception catch (e) {
+            sendPort.send(Message(channelId: channelId, name: name, dataType: DataType.ERROR, exception: e));
+          }
+        }
+        break;
+      case DataType.ERROR:
+        for (final callback in _onErrorCallbackList) {
+          callback(message.exception!);
         }
         break;
     }
   }
+
+  @override
+  void onError(Function(Exception e) callback) => _onErrorCallbackList.add(callback);
 }

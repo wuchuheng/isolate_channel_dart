@@ -17,5 +17,7 @@ abstract class ChannelAbstract {
   Listen listen(Function(String message, ChannelAbstract channel) callback);
 
   /// Trigger listening events.
-  void onMessage(Message message) {}
+  void onMessage(Message message);
+
+  void onError(Function(Exception e) callback);
 }

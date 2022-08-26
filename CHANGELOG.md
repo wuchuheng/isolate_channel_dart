@@ -5,3 +5,6 @@
 ## 0.0.2
 - refactor: Optimization code
 
+## 0.0.3
+- feat: Add exception feature.
+

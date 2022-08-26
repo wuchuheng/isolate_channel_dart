@@ -1,10 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'index.g.dart';
-
 enum DataType {
   CLOSE,
   DATA,
+  ERROR,
 }
 
 @JsonSerializable()
@@ -13,15 +12,13 @@ class Message {
   final int channelId;
   final DataType dataType;
   final String name;
+  final Exception? exception;
 
   Message({
     this.data = '',
+    this.exception,
     required this.channelId,
     required this.name,
     this.dataType = DataType.DATA,
   });
-
-  factory Message.fromJson(Map<String, dynamic> json) => _$MessageFromJson(json);
-
-  Map<String, dynamic> toJson() => _$MessageToJson(this);
 }
