@@ -13,3 +13,6 @@
 
 ## 0.0.5
 - feat: Modifying abstract classes.
+
+## 0.0.6
+- feat: Modifying the entry file.
