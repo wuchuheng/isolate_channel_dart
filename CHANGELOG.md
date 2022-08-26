@@ -10,3 +10,6 @@
 
 ## 0.0.4
 - feat: Add listenToFuture method.'
+
+## 0.0.5
+- feat: Modifying abstract classes.

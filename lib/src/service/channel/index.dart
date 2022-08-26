@@ -7,7 +7,9 @@ import 'index_abstract.dart';
 
 class Channel implements ChannelAbstract {
   late final Function() _close;
+  @override
   final int channelId;
+
   late final SendPort _sendPort;
   final List<Function(String name)> _onCloseCallbackList = [];
   final List<Function(Exception error)> _onErrorCallbackList = [];

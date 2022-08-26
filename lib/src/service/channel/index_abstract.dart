@@ -7,6 +7,8 @@ abstract class ChannelAbstract {
 
   String get name;
 
+  int get channelId;
+
   /// send the message to isolate
   void send(String message);
 
