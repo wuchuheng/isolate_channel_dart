@@ -16,3 +16,6 @@
 
 ## 0.0.6
 - feat: Modifying the entry file.
+
+## 0.0.7
+- fix: fix the issue of not handling errors.
