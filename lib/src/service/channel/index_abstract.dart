@@ -1,3 +1,5 @@
+import 'package:wuchuheng_isolate_channel/src/index.dart';
+
 import '../../dto/listen/index.dart';
 import '../../dto/message/index.dart';
 
@@ -16,7 +18,7 @@ abstract class ChannelAbstract {
   void onClose(Function(String name) callback);
 
   /// listening the message from channel.
-  Listen listen(Function(String message, ChannelAbstract channel) callback);
+  Listen listen(IsolateSubjectCallback callback);
 
   /// Trigger listening events.
   void onMessage(Message message);

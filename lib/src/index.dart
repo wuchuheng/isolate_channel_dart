@@ -8,10 +8,7 @@ import 'service/channel/index_abstract.dart';
 import 'service/task/index.dart';
 
 typedef Sender = Function(String message);
-typedef IsolateSubjectCallback = Function(
-  String message,
-  ChannelAbstract channel,
-);
+typedef IsolateSubjectCallback = Future Function(String message, ChannelAbstract channel);
 
 Future<Task> IsolateTask(IsolateSubjectCallback callback) async {
   ReceivePort receivePort = ReceivePort();

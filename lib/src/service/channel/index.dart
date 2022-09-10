@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'dart:isolate';
-
 import 'package:stack_trace/stack_trace.dart';
 import 'package:wuchuheng_isolate_channel/src/exception/error_exception.dart';
-
+import '../../../wuchuheng_isolate_channel.dart';
 import '../../dto/listen/index.dart';
 import '../../dto/message/index.dart';
 import 'index_abstract.dart';
@@ -20,7 +19,7 @@ class Channel implements ChannelAbstract {
 
   @override
   final String name;
-  final Map<int, Function(String message, ChannelAbstract channel)> _idMapCallback = {};
+  final Map<int, IsolateSubjectCallback> _idMapCallback = {};
 
   Channel({
     required SendPort sendPort,
@@ -54,7 +53,7 @@ class Channel implements ChannelAbstract {
   void onClose(Function(String name) callback) => _onCloseCallbackList.add(callback);
 
   @override
-  Listen listen(Function(String message, ChannelAbstract channel) callback) {
+  Listen listen(IsolateSubjectCallback callback) {
     final id = DateTime.now().microsecondsSinceEpoch;
     _idMapCallback[id] = callback;
     return Listen(() {
@@ -63,7 +62,7 @@ class Channel implements ChannelAbstract {
   }
 
   @override
-  void onMessage(Message message) {
+  void onMessage(Message message) async {
     switch (message.dataType) {
       case DataType.CLOSE:
         for (var callback in _onCloseCallbackList) {
@@ -75,7 +74,7 @@ class Channel implements ChannelAbstract {
       case DataType.DATA:
         for (var id in _idMapCallback.keys) {
           try {
-            _idMapCallback[id]!(message.data, this);
+            await _idMapCallback[id]!(message.data, this);
           } on Exception catch (e) {
             _sendPort.send(Message(channelId: channelId, name: name, dataType: DataType.ERROR, exception: e));
           } on Error catch (e, stack) {

@@ -15,7 +15,7 @@ void main() {
       });
 
       task.createChannel(name: 'channel1')
-        ..listen((message, channel) => expect(message, 'task data')).cancel()
+        ..listen((message, channel) async => expect(message, 'task data')).cancel()
         ..send('channelData');
 
       await Future.delayed(Duration(seconds: 1));
@@ -25,7 +25,7 @@ void main() {
         Logger.info('server: receive $message');
         channel.close();
       });
-      final channel = task.createChannel()..listen((message, channel) => Logger.info(message));
+      final channel = task.createChannel()..listen((message, channel) async => Logger.info(message));
       channel.send('channelData');
       final subject = SubjectHook<bool>();
       channel.onClose((name) => subject.next(true));
@@ -85,7 +85,7 @@ void main() {
   });
 }
 
-void compute(String message, channel) {
+Future compute(String message, channel) async {
   Logger.info('server: receive $message');
   channel.close();
 }

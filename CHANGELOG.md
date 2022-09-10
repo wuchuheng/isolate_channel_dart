@@ -19,3 +19,7 @@
 
 ## 0.0.8
 - fix: fix the issue of not handling errors.
+ 
+## 0.0.9
+- fix: Fix the exception not being thrown normally when asynchronous
+
