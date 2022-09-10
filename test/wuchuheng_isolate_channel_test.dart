@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:test/test.dart';
 import 'package:wuchuheng_hooks/wuchuheng_hooks.dart';
 import 'package:wuchuheng_isolate_channel/src/service/task/index.dart';
@@ -9,7 +8,7 @@ import 'package:wuchuheng_logger/wuchuheng_logger.dart';
 void main() {
   group('A group of tests', () {
     test('Data transfer Test', () async {
-      final Task task = await IsolateTask((message, channel) {
+      final Task task = await IsolateTask((message, channel) async {
         Logger.info('channel name: ${channel.name}');
         Logger.info('server: receive $message');
         channel.send('task data');
@@ -22,7 +21,7 @@ void main() {
       await Future.delayed(Duration(seconds: 1));
     }, timeout: Timeout(Duration(seconds: 100)));
     test('close event Test', () async {
-      final Task task = await IsolateTask((message, channel) {
+      final Task task = await IsolateTask((message, channel) async {
         Logger.info('server: receive $message');
         channel.close();
       });
@@ -42,7 +41,7 @@ void main() {
       await Future.delayed(Duration(seconds: 1));
     }, timeout: Timeout(Duration(seconds: 100)));
     test('Main thread listens for exceptions Test', () async {
-      final Task task = await IsolateTask((message, channel) {
+      final Task task = await IsolateTask((message, channel) async {
         if (channel.name == 'channel1') {
           throw Exception('channel exception');
         }
@@ -60,7 +59,7 @@ void main() {
       expect(isThrowError, true);
     }, timeout: Timeout(Duration(seconds: 3)));
     test('ToFuture test', () async {
-      final task = await IsolateTask((message, channel) {
+      final task = await IsolateTask((message, channel) async {
         channel.send(message);
       });
       final channel = task.createChannel();
@@ -68,6 +67,20 @@ void main() {
       channel.send('OK');
       await Future.delayed(Duration(seconds: 3));
       expect(await result, 'OK');
+    });
+    test('Exception Test', () async {
+      Exception? exception;
+
+      final Task task = await IsolateTask((message, channel) {
+        throw Exception('error');
+      });
+      task.createChannel()
+        ..send('')
+        ..onError((e) {
+          exception = e;
+        });
+      await Future.delayed(Duration(seconds: 1));
+      expect(exception != null, isTrue);
     });
   });
 }
