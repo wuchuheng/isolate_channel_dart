@@ -23,3 +23,6 @@
 ## 0.0.9
 - fix: Fix the exception not being thrown normally when asynchronous
 
+## 0.0.10
+- fix: Fix the issue of exception not throw.
+

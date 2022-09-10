@@ -62,7 +62,7 @@ class Channel implements ChannelAbstract {
   }
 
   @override
-  void onMessage(Message message) async {
+  void onMessage(Message message) {
     switch (message.dataType) {
       case DataType.CLOSE:
         for (var callback in _onCloseCallbackList) {
@@ -73,18 +73,20 @@ class Channel implements ChannelAbstract {
         break;
       case DataType.DATA:
         for (var id in _idMapCallback.keys) {
-          try {
-            await _idMapCallback[id]!(message.data, this);
-          } on Exception catch (e) {
-            _sendPort.send(Message(channelId: channelId, name: name, dataType: DataType.ERROR, exception: e));
-          } on Error catch (e, stack) {
-            final chain = Chain.forTrace(stack);
-            final frames = chain.toTrace().frames;
-            final frame = frames[1];
-            final file = '${frame.uri}:${frame.line}:${frame.column}';
-            final err = ErrorException(file);
-            _sendPort.send(Message(channelId: channelId, name: name, dataType: DataType.ERROR, exception: err));
-          }
+          (() async {
+            try {
+              await _idMapCallback[id]!(message.data, this);
+            } on Exception catch (e) {
+              _sendPort.send(Message(channelId: channelId, name: name, dataType: DataType.ERROR, exception: e));
+            } on Error catch (e, stack) {
+              final chain = Chain.forTrace(stack);
+              final frames = chain.toTrace().frames;
+              final frame = frames[1];
+              final file = '${frame.uri}:${frame.line}:${frame.column}';
+              final err = ErrorException(file);
+              _sendPort.send(Message(channelId: channelId, name: name, dataType: DataType.ERROR, exception: err));
+            }
+          })();
         }
         for (var callback in _toFutureCallback) {
           callback(message.data);
