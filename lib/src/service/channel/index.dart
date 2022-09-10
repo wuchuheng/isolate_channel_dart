@@ -2,12 +2,14 @@ import 'dart:async';
 import 'dart:isolate';
 import 'package:stack_trace/stack_trace.dart';
 import 'package:wuchuheng_isolate_channel/src/exception/error_exception.dart';
+import 'package:wuchuheng_task_util/wuchuheng_task_util.dart';
 import '../../../wuchuheng_isolate_channel.dart';
 import '../../dto/listen/index.dart';
 import '../../dto/message/index.dart';
 import 'index_abstract.dart';
 
 class Channel implements ChannelAbstract {
+  SingleTaskPool singleTaskPool = SingleTaskPool.builder();
   late final Function() _close;
   @override
   final int channelId;
@@ -39,7 +41,9 @@ class Channel implements ChannelAbstract {
     _onCloseCallbackList.clear();
     final data = Message(channelId: channelId, dataType: DataType.CLOSE, name: name);
     _sendPort.send(data);
-    _onErrorCallbackList.clear();
+    singleTaskPool.start(() async {
+      _onErrorCallbackList.clear();
+    });
     _close();
   }
 
@@ -92,17 +96,22 @@ class Channel implements ChannelAbstract {
           callback(message.data);
         }
         _toFutureCallback.clear();
+
         break;
       case DataType.ERROR:
-        for (final callback in _onErrorCallbackList) {
-          callback(message.exception!);
-        }
+        singleTaskPool.start(() async {
+          for (final callback in _onErrorCallbackList) {
+            callback(message.exception!);
+          }
+        });
         break;
     }
   }
 
   @override
-  void onError(Function(Exception e) callback) => _onErrorCallbackList.add(callback);
+  void onError(Function(Exception e) callback) async => await singleTaskPool.start(() async {
+        _onErrorCallbackList.add(callback);
+      });
 
   @override
   Future<String> listenToFuture() {

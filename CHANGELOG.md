@@ -26,3 +26,5 @@
 ## 0.0.10
 - fix: Fix the issue of exception not throw.
 
+## 0.0.11
+- fix: fix the issue that concurrent modification during iteration: Instance(length:0) of '_GrowableList'.
