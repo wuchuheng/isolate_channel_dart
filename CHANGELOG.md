@@ -28,3 +28,6 @@
 
 ## 0.0.11
 - fix: fix the issue that concurrent modification during iteration: Instance(length:0) of '_GrowableList'.
+
+## 0.0.12
+- chore: updated version.

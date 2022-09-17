@@ -1,10 +1,10 @@
 name: wuchuheng_isolate_channel
 description: This a library to simplify isolate thread communication.
-version: 0.0.11
+version: 0.0.12
 homepage: https://github.com/wuchuheng/isolate_channel_dart.git
 
 environment:
-  sdk: '>=2.17.6 <3.0.0'
+  sdk: '>=2.17.0 <3.0.0'
 
 dependencies:
   wuchuheng_hooks: ^0.0.3
