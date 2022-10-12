@@ -83,8 +83,7 @@ class Channel implements ChannelAbstract {
             try {
               await _idMapCallback[id]!(message.data, this);
             } on Exception catch (e) {
-              _sendPort.send(
-                  Message(channelId: channelId, name: name, dataType: DataType.ERROR, exception: e ?? Exception()));
+              _sendPort.send(Message(channelId: channelId, name: name, dataType: DataType.ERROR, exception: e));
             } on Error catch (e, stack) {
               final chain = Chain.forTrace(stack);
               final frames = chain.toTrace().frames;
