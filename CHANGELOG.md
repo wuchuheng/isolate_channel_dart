@@ -31,3 +31,6 @@
 
 ## 0.0.12
 - chore: updated version.
+
+## 0.0.13
+- fix: fix the exception cannot be report when the exception is empty.

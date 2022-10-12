@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:isolate';
+
 import 'package:stack_trace/stack_trace.dart';
 import 'package:wuchuheng_isolate_channel/src/exception/error_exception.dart';
 import 'package:wuchuheng_task_util/wuchuheng_task_util.dart';
+
 import '../../../wuchuheng_isolate_channel.dart';
 import '../../dto/listen/index.dart';
 import '../../dto/message/index.dart';
@@ -81,7 +83,8 @@ class Channel implements ChannelAbstract {
             try {
               await _idMapCallback[id]!(message.data, this);
             } on Exception catch (e) {
-              _sendPort.send(Message(channelId: channelId, name: name, dataType: DataType.ERROR, exception: e));
+              _sendPort.send(
+                  Message(channelId: channelId, name: name, dataType: DataType.ERROR, exception: e ?? Exception()));
             } on Error catch (e, stack) {
               final chain = Chain.forTrace(stack);
               final frames = chain.toTrace().frames;
