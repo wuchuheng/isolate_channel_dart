@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:test/test.dart';
 import 'package:wuchuheng_hooks/wuchuheng_hooks.dart';
 import 'package:wuchuheng_isolate_channel/src/service/task/index.dart';
@@ -57,6 +58,8 @@ void main() {
       channel1.send('channel1 data');
       await Future.delayed(Duration(seconds: 2));
       expect(isThrowError, true);
+      channel2.close();
+      channel1.close();
     }, timeout: Timeout(Duration(seconds: 3)));
     test('ToFuture test', () async {
       final task = await IsolateTask((message, channel) async {
@@ -81,6 +84,21 @@ void main() {
         });
       await Future.delayed(Duration(seconds: 1));
       expect(exception != null, isTrue);
+    });
+    test('Nested testing', () async {
+      final externalMessage = 'External message';
+      final Task task = await IsolateTask((_, channel) async => channel.send('hello'));
+      final channel = task.createChannel()..send(externalMessage);
+      final result = await channel.listenToFuture();
+      expect(result, 'hello');
+      final nestChannelTask = await IsolateTask((_, channel) async {
+        channel.listen((message, nestChannel) async {
+          nestChannel.send('ok');
+        });
+      });
+      final nestChannel = nestChannelTask.createChannel()..send('hello');
+      final replay = await nestChannel.listenToFuture();
+      expect(replay, 'ok');
     });
   });
 }
