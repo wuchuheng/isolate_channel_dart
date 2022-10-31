@@ -67,6 +67,8 @@ class Channel implements ChannelAbstract {
     });
   }
 
+  Map<int, Channel> childChannel = {};
+
   @override
   void onMessage(Message message) {
     switch (message.dataType) {
@@ -81,7 +83,17 @@ class Channel implements ChannelAbstract {
         for (var id in _idMapCallback.keys) {
           (() async {
             try {
-              await _idMapCallback[id]!(message.data, this);
+              final int childChannelId = DateTime.now().microsecondsSinceEpoch;
+              final channel = Channel(
+                  sendPort: _sendPort,
+                  name: name,
+                  channelId: channelId,
+                  close: () {
+                    childChannel.removeWhere((key, value) => key == childChannelId);
+                  });
+              childChannel.addAll({childChannelId: channel});
+              await _idMapCallback[id]!(message.data, childChannel[childChannelId]!);
+              channel.onMessage(message);
             } on Exception catch (e) {
               _sendPort.send(Message(channelId: channelId, name: name, dataType: DataType.ERROR, exception: e));
             } on Error catch (e, stack) {
