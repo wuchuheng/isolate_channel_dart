@@ -4,18 +4,15 @@ on:
       - '**'
     branches:
       - '**'
-name: Flutter integration test
+name: Test
 jobs:
-  drive_android:
+  test:
     runs-on: macos-latest
-    strategy:
-      matrix:
-        api-level: [29]
-        target: [playstore]
     steps:
-      - uses: actions/checkout@v2
-      - uses: subosito/flutter-action@v1
-        with:
-          flutter-version: '3.0.5'
-          channel: 'stable'
-      - run: dart test
+      - uses: actions/checkout@v1
+      - name: Install Flutter
+        uses: subosito/flutter-action@v1.3.2
+      - name: Install app dependencies
+        run: flutter pub get
+      - name: Test app
+        run: flutter test --coverage
