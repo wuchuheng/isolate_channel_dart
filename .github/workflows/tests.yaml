@@ -5,14 +5,17 @@ on:
     branches:
       - '**'
 name: Test
+
 jobs:
-  test:
-    runs-on: macos-latest
+  build:
+    runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v1
-      - name: Install Flutter
-        uses: subosito/flutter-action@v1.3.2
-      - name: Install app dependencies
-        run: flutter pub get
-      - name: Test app
-        run: flutter test --coverage
+      - uses: actions/checkout@v2
+      - uses: dart-lang/setup-dart@v1.3
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Testing
+        run: dart test
