@@ -36,4 +36,9 @@
 - fix: fix the exception cannot be report when the exception is empty.
 
 ## 0.0.14
+
 - fix: fix the exception cannot be report when the exception is empty.
+
+## 0.0.14
+
+- fix: fix the issue of concurrentError.
