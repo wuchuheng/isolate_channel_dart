@@ -1,4 +1,7 @@
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://badgen.net/badge/license/MIT/blue)
+![https://pub.dev/packages/wuchuheng_isolate_channel](https://badgen.net/pub/v/wuchuheng_isolate_channel)
+![https://badgen.net/pub/likes/wuchuheng_isolate_channel](https://badgen.net/pub/likes/wuchuheng_isolate_channel)
+![https://badgen.net/pub/flutter-platform/wuchuheng_isolate_channel](https://badgen.net/pub/flutter-platform/wuchuheng_isolate_channel)
 <a href="https://github.com/wuchuheng/isolate_channel_dart/actions"><img src="https://github.com/wuchuheng/isolate_channel_dart/actions/workflows/tests.yaml/badge.svg" alt="Build Status"></a>
 
 
