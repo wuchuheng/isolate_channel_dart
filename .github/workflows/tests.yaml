@@ -18,13 +18,4 @@ jobs:
         with:
           flutter-version: '3.0.5'
           channel: 'stable'
-
-      # Run integration test
-      - name: Run Flutter Driver tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          target: ${{ matrix.target }}
-          api-level: ${{ matrix.api-level }}
-          arch: x86_64
-          profile: Nexus 6
-          script: dart test
+        run: dart test
