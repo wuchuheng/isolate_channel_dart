@@ -1,10 +1,10 @@
 import 'dart:isolate';
 
 import 'package:wuchuheng_hooks/wuchuheng_hooks.dart';
+import 'package:wuchuheng_isolate_channel/src/service/channel/isolate_channel.dart';
 
 import 'dto/message/index.dart';
-import 'service/channel/index.dart';
-import 'service/channel/index_abstract.dart';
+import 'service/channel/channel_abstract.dart';
 import 'service/task/index.dart';
 
 typedef Sender = Function(String message);
@@ -15,23 +15,23 @@ Future<Task> IsolateTask(IsolateSubjectCallback callback) async {
   Isolate.spawn<SendPort>((SendPort isolateSendPort) async {
     ReceivePort isolateReceivePort = ReceivePort();
     isolateSendPort.send(isolateReceivePort.sendPort);
-    Map<int, Channel> idMapChannel = {};
+    Map<int, IsolateChannel> idMapChannel = {};
     await for (var messageJson in isolateReceivePort) {
       final Message message = messageJson;
       if (!idMapChannel.containsKey(message.channelId)) {
-        final channel = Channel(
+        final channel = IsolateChannel(
           sendPort: isolateSendPort,
           name: message.name,
           channelId: message.channelId,
-          close: () {
-            if (idMapChannel.containsKey(message.channelId)) idMapChannel.remove(message.channelId);
-          },
         );
         channel.listen(callback);
         idMapChannel[message.channelId] = channel;
       }
-      final Channel channel = idMapChannel[message.channelId]!;
+      final IsolateChannel channel = idMapChannel[message.channelId]!;
       channel.onMessage(message);
+      channel.onClose((name) {
+        if (idMapChannel.containsKey(message.channelId)) idMapChannel.remove(message.channelId);
+      });
     }
   }, receivePort.sendPort);
 

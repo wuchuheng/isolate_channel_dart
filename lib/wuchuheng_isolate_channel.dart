@@ -1,5 +1,6 @@
 library wuchuheng_isolate_channel;
 
-export 'src/index.dart';
-export 'src/service/channel/index_abstract.dart';
+export 'src/dto/listen/listen.dart';
+export 'src/main.dart';
+export 'src/service/channel/channel_abstract.dart';
 export 'src/service/task/index.dart';

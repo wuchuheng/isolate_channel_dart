@@ -2,17 +2,16 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:stack_trace/stack_trace.dart';
+import 'package:wuchuheng_isolate_channel/src/dto/listen/listen.dart';
+import 'package:wuchuheng_isolate_channel/src/dto/message/index.dart';
 import 'package:wuchuheng_isolate_channel/src/exception/error_exception.dart';
+import 'package:wuchuheng_isolate_channel/src/service/channel/channel_abstract.dart';
 import 'package:wuchuheng_task_util/wuchuheng_task_util.dart';
 
 import '../../../wuchuheng_isolate_channel.dart';
-import '../../dto/listen/index.dart';
-import '../../dto/message/index.dart';
-import 'index_abstract.dart';
 
-class Channel implements ChannelAbstract {
+class MainThreadChannel implements ChannelAbstract {
   SingleTaskPool singleTaskPool = SingleTaskPool.builder();
-  late final Function() _close;
   @override
   final int channelId;
 
@@ -25,15 +24,11 @@ class Channel implements ChannelAbstract {
   final String name;
   final Map<int, IsolateSubjectCallback> _idMapCallback = {};
 
-  Channel({
+  MainThreadChannel({
     required SendPort sendPort,
     required this.name,
     required this.channelId,
-    required Function() close,
-  }) {
-    _sendPort = sendPort;
-    _close = close;
-  }
+  }) : _sendPort = sendPort;
 
   @override
   void close() {
@@ -46,7 +41,8 @@ class Channel implements ChannelAbstract {
     singleTaskPool.start(() async {
       _onErrorCallbackList.clear();
     });
-    _close();
+    _childChannel.forEach((key, value) => value.close());
+    _childChannel.clear();
   }
 
   @override
@@ -67,7 +63,7 @@ class Channel implements ChannelAbstract {
     });
   }
 
-  Map<int, Channel> childChannel = {};
+  Map<int, ChannelAbstract> _childChannel = {};
 
   @override
   void onMessage(Message message) {
@@ -77,23 +73,19 @@ class Channel implements ChannelAbstract {
           callback(name);
         }
         _onCloseCallbackList.clear();
-        _close();
         break;
       case DataType.DATA:
         for (var id in _idMapCallback.keys) {
           (() async {
             try {
               final int childChannelId = DateTime.now().microsecondsSinceEpoch;
-              final channel = Channel(
-                  sendPort: _sendPort,
-                  name: name,
-                  channelId: channelId,
-                  close: () {
-                    childChannel.removeWhere((key, value) => key == childChannelId);
-                  });
-              childChannel.addAll({childChannelId: channel});
-              await _idMapCallback[id]!(message.data, childChannel[childChannelId]!);
-              channel.onMessage(message);
+              ChannelAbstract channel = MainThreadChannel(sendPort: _sendPort, name: name, channelId: channelId);
+              channel.onClose((name) {
+                _childChannel.removeWhere((key, value) => key == childChannelId);
+              });
+              _childChannel.addAll({childChannelId: channel});
+              await _idMapCallback[id]!(message.data, _childChannel[childChannelId]!);
+              _childChannel[childChannelId]?.onMessage(message);
             } on Exception catch (e) {
               _sendPort.send(Message(channelId: channelId, name: name, dataType: DataType.ERROR, exception: e));
             } on Error catch (e, stack) {

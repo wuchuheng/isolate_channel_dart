@@ -20,7 +20,7 @@ start using the package.
 ## Usage
 
 ```dart
-import 'package:wuchuheng_isolate_channel/src/service/task/index.dart';
+import 'package:wuchuheng_isolate_channel/src/service/task/channel.dart';
 import 'package:wuchuheng_isolate_channel/wuchuheng_isolate_channel.dart';
 import 'package:wuchuheng_logger/wuchuheng_logger.dart';
 

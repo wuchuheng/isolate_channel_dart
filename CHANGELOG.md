@@ -42,3 +42,11 @@
 ## 0.0.15
 
 - fix: fix the issue of concurrentError.
+
+## 0.0.16
+
+- refactor: refactoring code.
+
+## 0.0.17
+
+- refactor: refactoring code.
