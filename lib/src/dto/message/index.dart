@@ -9,7 +9,7 @@ enum DataType {
 @JsonSerializable()
 class Message {
   final String data;
-  final int channelId;
+  final String channelId;
   final DataType dataType;
   final String name;
   final Exception? exception;

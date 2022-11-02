@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:stack_trace/stack_trace.dart';
+import 'package:uuid/uuid.dart';
 import 'package:wuchuheng_isolate_channel/src/dto/listen/listen.dart';
 import 'package:wuchuheng_isolate_channel/src/dto/message/index.dart';
 import 'package:wuchuheng_isolate_channel/src/exception/error_exception.dart';
@@ -13,7 +14,7 @@ import '../../../wuchuheng_isolate_channel.dart';
 class MainThreadChannel implements ChannelAbstract {
   SingleTaskPool singleTaskPool = SingleTaskPool.builder();
   @override
-  final int channelId;
+  final String channelId;
 
   late final SendPort _sendPort;
   final List<Function(String name)> _onCloseCallbackList = [];
@@ -22,7 +23,7 @@ class MainThreadChannel implements ChannelAbstract {
 
   @override
   final String name;
-  final Map<int, IsolateSubjectCallback> _idMapCallback = {};
+  final Map<String, IsolateSubjectCallback> _idMapCallback = {};
 
   MainThreadChannel({
     required SendPort sendPort,
@@ -56,14 +57,14 @@ class MainThreadChannel implements ChannelAbstract {
 
   @override
   Listen listen(IsolateSubjectCallback callback) {
-    final id = DateTime.now().microsecondsSinceEpoch;
+    final String id = Uuid().v4();
     _idMapCallback[id] = callback;
     return Listen(() {
       if (_idMapCallback.containsKey(id)) _idMapCallback.remove(id);
     });
   }
 
-  Map<int, ChannelAbstract> _childChannel = {};
+  Map<String, ChannelAbstract> _childChannel = {};
 
   @override
   void onMessage(Message message) {
@@ -78,7 +79,7 @@ class MainThreadChannel implements ChannelAbstract {
         for (var id in _idMapCallback.keys) {
           (() async {
             try {
-              final int childChannelId = DateTime.now().microsecondsSinceEpoch;
+              final String childChannelId = Uuid().v4();
               ChannelAbstract channel = MainThreadChannel(sendPort: _sendPort, name: name, channelId: channelId);
               channel.onClose((name) {
                 _childChannel.removeWhere((key, value) => key == childChannelId);

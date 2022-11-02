@@ -15,7 +15,7 @@ Future<Task> IsolateTask(IsolateSubjectCallback callback) async {
   Isolate.spawn<SendPort>((SendPort isolateSendPort) async {
     ReceivePort isolateReceivePort = ReceivePort();
     isolateSendPort.send(isolateReceivePort.sendPort);
-    Map<int, IsolateChannel> idMapChannel = {};
+    Map<String, IsolateChannel> idMapChannel = {};
     await for (var messageJson in isolateReceivePort) {
       final Message message = messageJson;
       if (!idMapChannel.containsKey(message.channelId)) {

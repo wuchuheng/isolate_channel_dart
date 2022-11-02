@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:stack_trace/stack_trace.dart';
+import 'package:uuid/uuid.dart';
 import 'package:wuchuheng_isolate_channel/src/dto/listen/listen.dart';
 import 'package:wuchuheng_isolate_channel/src/service/channel/channel_abstract.dart';
 import 'package:wuchuheng_task_util/wuchuheng_task_util.dart';
@@ -13,7 +14,7 @@ import '../../exception/error_exception.dart';
 class IsolateChannel implements ChannelAbstract {
   SingleTaskPool singleTaskPool = SingleTaskPool.builder();
   @override
-  final int channelId;
+  final String channelId;
 
   late final SendPort _sendPort;
   final List<Function(String name)> _onCloseCallbackList = [];
@@ -22,7 +23,7 @@ class IsolateChannel implements ChannelAbstract {
 
   @override
   final String name;
-  final Map<int, IsolateSubjectCallback> _idMapCallback = {};
+  final Map<String, IsolateSubjectCallback> _idMapCallback = {};
 
   IsolateChannel({
     required SendPort sendPort,
@@ -54,7 +55,7 @@ class IsolateChannel implements ChannelAbstract {
 
   @override
   Listen listen(IsolateSubjectCallback callback) {
-    final id = DateTime.now().microsecondsSinceEpoch;
+    final String id = Uuid().v4();
     _idMapCallback[id] = callback;
     return Listen(() {
       if (_idMapCallback.containsKey(id)) _idMapCallback.remove(id);

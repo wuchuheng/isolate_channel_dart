@@ -9,7 +9,7 @@ abstract class ChannelAbstract {
 
   String get name;
 
-  int get channelId;
+  String get channelId;
 
   /// send the message to isolate
   void send(String message);
