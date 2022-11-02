@@ -54,3 +54,7 @@
 ## 0.0.18
 
 - fix: fix the issue that the some id may cause an error due to concurrency.
+
+## 0.0.19
+
+- chore: upgrade hooks dependence
