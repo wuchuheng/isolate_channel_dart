@@ -1,11 +1,11 @@
 <div align="center">
     <h1>wuchuheng_isolate_channel</h1>
-    <a href="https://badgen.net/badge/license/MIT/blue"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="wuchuheng_isolate_channel" /></a>
+    <a href="https://github.com/wuchuheng/isolate_channel_dart"><img src="https://badgen.net/badge/Licence/MIT/green" alt="wuchuheng_isolate_channel" /></a>
+    <a href="https://github.com/wuchuheng/isolate_channel_dart"><img alt="wuchuheng_isolate_channel" src="https://badgen.net/github/stars/wuchuheng/isolate_channel_dart?icon=github&color=green"></a>
     <a href="https://github.com/wuchuheng/isolate_channel_dart/actions"><img src="https://github.com/wuchuheng/isolate_channel_dart/actions/workflows/tests.yaml/badge.svg" alt="Build Status"></a>
-    <a href="https://pub.dev/packages/wuchuheng_isolate_channel"><img alt="wuchuheng_isolate_channel" src="https://badgen.net/pub/v/wuchuheng_isolate_channel" /></a>
+    <a href="https://pub.dev/packages/wuchuheng_isolate_channel"><img alt="wuchuheng_isolate_channel" src="https://badgen.net/pub/v/wuchuheng_isolate_channel?color=green" /></a>
     <a href="https://badgen.net/pub/likes/wuchuheng_isolate_channel"><img alt="wuchuheng_isolate_channel" src="https://badgen.net/pub/likes/wuchuheng_isolate_channel" /></a>
     <a href="https://badgen.net/pub/flutter-platform/wuchuheng_isolate_channel"><img alt="wuchuheng_isolate_channel" src="https://badgen.net/pub/flutter-platform/wuchuheng_isolate_channel"></a>
-    <a href="https://github.com/wuchuheng/isolate_channel_dart"><img alt="wuchuheng_isolate_channel" src="https://badgen.net/github/stars/wuchuheng/isolate_channel_dart?icon=github"></a>
 </div>
 
 
