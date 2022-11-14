@@ -62,3 +62,7 @@
 ## 0.0.20
 
 - chore: updated examples.
+- 
+## 0.0.21
+
+- docs: updated README.md
