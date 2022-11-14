@@ -4,7 +4,9 @@
 <a href="https://github.com/wuchuheng/isolate_channel_dart/actions"><img src="https://github.com/wuchuheng/isolate_channel_dart/actions/workflows/tests.yaml/badge.svg" alt="Build Status"></a>
 <a href="https://pub.dev/packages/wuchuheng_isolate_channel"><img alt="wuchuheng_isolate_channel" src="https://badgen.net/pub/v/wuchuheng_isolate_channel" /></a>
 <a href="https://badgen.net/pub/likes/wuchuheng_isolate_channel"><img alt="wuchuheng_isolate_channel" src="https://badgen.net/pub/likes/wuchuheng_isolate_channel" /></a>
-<a href="https://badgen.net/pub/flutter-platform/wuchuheng_isolate_channel"><img alt="wuchuheng_isolate_channel" src="https://badgen.net/pub/flutter-platform/wuchuheng_isolate_channel" /></a>
+<a href="https://badgen.net/pub/flutter-platform/wuchuheng_isolate_channel">
+<img src="https://badgen.net/pub/flutter-platform/wuchuheng_isolate_channel">
+</a>
 </div>
 
 
