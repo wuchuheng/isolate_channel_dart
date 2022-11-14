@@ -21,6 +21,7 @@
 - fix: fix the issue of not handling errors.
  
 ## 0.0.9
+
 - fix: Fix the exception not being thrown normally when asynchronous
 
 ## 0.0.10
@@ -62,7 +63,11 @@
 ## 0.0.20
 
 - chore: updated examples.
-- 
+
 ## 0.0.21
+
+- docs: updated README.md
+- 
+## 0.0.22
 
 - docs: updated README.md
