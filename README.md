@@ -1,11 +1,14 @@
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://badgen.net/badge/license/MIT/blue)
-![https://pub.dev/packages/wuchuheng_isolate_channel](https://badgen.net/pub/v/wuchuheng_isolate_channel)
-![https://badgen.net/pub/likes/wuchuheng_isolate_channel](https://badgen.net/pub/likes/wuchuheng_isolate_channel)
-![https://badgen.net/pub/flutter-platform/wuchuheng_isolate_channel](https://badgen.net/pub/flutter-platform/wuchuheng_isolate_channel)
+<div align="center">
+<h1>wuchuheng_isolate_channel</h1>
+<a href="https://badgen.net/badge/license/MIT/blue"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="wuchuheng_isolate_channel" /></a>
 <a href="https://github.com/wuchuheng/isolate_channel_dart/actions"><img src="https://github.com/wuchuheng/isolate_channel_dart/actions/workflows/tests.yaml/badge.svg" alt="Build Status"></a>
+<a href="https://pub.dev/packages/wuchuheng_isolate_channel"><img alt="wuchuheng_isolate_channel" src="https://badgen.net/pub/v/wuchuheng_isolate_channel" /></a>
+<a href="https://badgen.net/pub/likes/wuchuheng_isolate_channel"><img alt="wuchuheng_isolate_channel" src="https://badgen.net/pub/likes/wuchuheng_isolate_channel" /></a>
+<a href="https://badgen.net/pub/flutter-platform/wuchuheng_isolate_channel"><img alt="wuchuheng_isolate_channel" src="https://badgen.net/pub/flutter-platform/wuchuheng_isolate_channel" /></a>
+</div>
 
 
-This a library to simplify islate thread communication. It abstracts the data transfer between islate and the main thread into a simple channel, and the channel only needs to listen for data changes and close the channel, thus simplifying the data communication of islate.
+This a library to simplify isolate thread communication. It abstracts the data transfer between isolate and the main thread into a simple channel, and the channel only needs to listen for data changes and close the channel, thus simplifying the data communication of islate.
 
 ## Features
 
@@ -14,27 +17,34 @@ This a library to simplify islate thread communication. It abstracts the data tr
 - Message Channel Close event.
 
 ## Getting started
-
-start using the package.
+Depend on it
+Run this command:
+With Dart:
+``` bash 
+$ dart pub add wuchuheng_isolate_channel
+```
+With Flutter:
+``` bash 
+$ flutter pub add wuchuheng_isolate_channel
+```
 
 ## Usage
 
 ```dart
-import 'package:wuchuheng_isolate_channel/src/service/task/channel.dart';
+import 'package:wuchuheng_isolate_channel/src/service/task/index.dart';
 import 'package:wuchuheng_isolate_channel/wuchuheng_isolate_channel.dart';
-import 'package:wuchuheng_logger/wuchuheng_logger.dart';
 
 void main() async {
     /// Isolate logic code.
-    final Task task = await IsolateTask((message, channel) {
-        Logger.info('isolate: receive $message');
+    final Task task = await IsolateTask((message, channel) async {
+        print("isolate: receive $message");
         channel.send('task data');
-        channel.onClose((name) => Logger.info('Channel is closed. channel: $name.'));
+        channel.onClose((name) => print('Channel is closed. channel: $name.'));
     });
 
     ///Main thread code.
     final channel = task.createChannel(name: 'channelName')
-        ..listen((message, channel) => Logger.info('Receiving isolate messages')).cancel();
+        ..listen((message, channel) async => print('Receiving isolate messages')).cancel();
     channel.send('Send data to isolate');
     await Future.delayed(Duration(seconds: 1));
 
@@ -42,14 +52,14 @@ void main() async {
     channel.close();
 
     /// listen to future
-    final task2 = await IsolateTask((message, channel) {
-        channel.send(message);
+    final task2 = await IsolateTask((message, channel) async {
+        print(message); //  print: Are you OK? Isolate task
+        channel.send('Nice!');
     });
     final channel2 = task2.createChannel();
     final result = channel2.listenToFuture();
-    channel.send('OK');
-    print(await result); // print 2
-
+    channel2.send('Are you OK? Isolate task');
+    print(await result); // print: Nice!
 }
 ```
 

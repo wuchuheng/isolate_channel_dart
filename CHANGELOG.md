@@ -58,3 +58,7 @@
 ## 0.0.19
 
 - chore: upgrade hooks dependence
+
+## 0.0.20
+
+- chore: updated examples.
