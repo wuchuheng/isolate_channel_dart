@@ -12,7 +12,7 @@ abstract class ChannelAbstract {
   String get channelId;
 
   /// send the message to isolate
-  void send(String message);
+  void send(dynamic message);
 
   /// close channel event.
   void onClose(Function(String name) callback);

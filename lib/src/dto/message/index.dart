@@ -8,7 +8,7 @@ enum DataType {
 
 @JsonSerializable()
 class Message {
-  final String data;
+  final dynamic data;
   final String channelId;
   final DataType dataType;
   final String name;

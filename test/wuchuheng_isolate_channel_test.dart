@@ -121,7 +121,7 @@ void main() {
   );
 }
 
-Future compute(String message, channel) async {
+Future compute(dynamic message, channel) async {
   Logger.info('server: receive $message');
   channel.close();
 }

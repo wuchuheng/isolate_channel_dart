@@ -67,7 +67,11 @@
 ## 0.0.21
 
 - docs: updated README.md
-- 
+
 ## 0.0.22
 
 - docs: updated README.md
+
+## 0.0.23
+
+- feat: to changed the message type to dynamic.

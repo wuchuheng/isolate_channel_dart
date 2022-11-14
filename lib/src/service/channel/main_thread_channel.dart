@@ -47,7 +47,7 @@ class MainThreadChannel implements ChannelAbstract {
   }
 
   @override
-  void send(String message) {
+  void send(dynamic message) {
     final data = Message(channelId: channelId, data: message, dataType: DataType.DATA, name: name);
     _sendPort.send(data);
   }
