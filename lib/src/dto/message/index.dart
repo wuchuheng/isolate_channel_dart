@@ -7,11 +7,11 @@ enum DataType {
 }
 
 @JsonSerializable()
-class Message {
+class Message<T> {
   final dynamic data;
   final String channelId;
   final DataType dataType;
-  final String name;
+  final T name;
   final Exception? exception;
 
   Message({

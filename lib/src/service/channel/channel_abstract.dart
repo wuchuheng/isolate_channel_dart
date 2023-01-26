@@ -3,11 +3,11 @@ import 'package:wuchuheng_isolate_channel/src/main.dart';
 import '../../dto/listen/listen.dart';
 import '../../dto/message/index.dart';
 
-abstract class ChannelAbstract {
+abstract class ChannelAbstract<T> {
   /// close the channel.
   void close();
 
-  String get name;
+  T get name;
 
   String get channelId;
 
@@ -15,10 +15,10 @@ abstract class ChannelAbstract {
   void send(dynamic message);
 
   /// close channel event.
-  void onClose(Function(String name) callback);
+  void onClose(Function(T name) callback);
 
   /// listening the message from channel.
-  Listen listen(IsolateSubjectCallback callback);
+  Listen listen(IsolateSubjectCallback<T> callback);
 
   /// Trigger listening events.
   void onMessage(Message message);

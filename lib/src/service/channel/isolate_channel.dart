@@ -11,19 +11,19 @@ import '../../../wuchuheng_isolate_channel.dart';
 import '../../dto/message/index.dart';
 import '../../exception/error_exception.dart';
 
-class IsolateChannel implements ChannelAbstract {
+class IsolateChannel<T> implements ChannelAbstract<T> {
   SingleTaskPool singleTaskPool = SingleTaskPool.builder();
   @override
   final String channelId;
 
   late final SendPort _sendPort;
-  final List<Function(String name)> _onCloseCallbackList = [];
+  final List<Function(T name)> _onCloseCallbackList = [];
   final List<Function(Exception error)> _onErrorCallbackList = [];
   final List<Function(String message)> _toFutureCallback = [];
 
   @override
-  final String name;
-  final Map<String, IsolateSubjectCallback> _idMapCallback = {};
+  final T name;
+  final Map<String, IsolateSubjectCallback<T>> _idMapCallback = {};
 
   IsolateChannel({
     required SendPort sendPort,
@@ -37,7 +37,7 @@ class IsolateChannel implements ChannelAbstract {
       callback(name);
     }
     _onCloseCallbackList.clear();
-    final data = Message(channelId: channelId, dataType: DataType.CLOSE, name: name);
+    final data = Message<T>(channelId: channelId, dataType: DataType.CLOSE, name: name);
     _sendPort.send(data);
     singleTaskPool.start(() async {
       _onErrorCallbackList.clear();
@@ -51,10 +51,10 @@ class IsolateChannel implements ChannelAbstract {
   }
 
   @override
-  void onClose(Function(String name) callback) => _onCloseCallbackList.add(callback);
+  void onClose(Function(T name) callback) => _onCloseCallbackList.add(callback);
 
   @override
-  Listen listen(IsolateSubjectCallback callback) {
+  Listen listen(IsolateSubjectCallback<T> callback) {
     final String id = Uuid().v4();
     _idMapCallback[id] = callback;
     return Listen(() {

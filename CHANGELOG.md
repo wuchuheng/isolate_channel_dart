@@ -75,3 +75,7 @@
 ## 0.0.23
 
 - feat: to changed the message type to dynamic.
+
+## 0.0.24
+
+- feat: add channel name feature.

@@ -11,19 +11,19 @@ import 'package:wuchuheng_task_util/wuchuheng_task_util.dart';
 
 import '../../../wuchuheng_isolate_channel.dart';
 
-class MainThreadChannel implements ChannelAbstract {
+class MainThreadChannel<T> implements ChannelAbstract<T> {
   SingleTaskPool singleTaskPool = SingleTaskPool.builder();
   @override
   final String channelId;
 
   late final SendPort _sendPort;
-  final List<Function(String name)> _onCloseCallbackList = [];
+  final List<Function(T name)> _onCloseCallbackList = [];
   final List<Function(Exception error)> _onErrorCallbackList = [];
   final List<Function(String message)> _toFutureCallback = [];
 
   @override
-  final String name;
-  final Map<String, IsolateSubjectCallback> _idMapCallback = {};
+  final T name;
+  final Map<String, IsolateSubjectCallback<T>> _idMapCallback = {};
 
   MainThreadChannel({
     required SendPort sendPort,
@@ -53,10 +53,10 @@ class MainThreadChannel implements ChannelAbstract {
   }
 
   @override
-  void onClose(Function(String name) callback) => _onCloseCallbackList.add(callback);
+  void onClose(Function(T name) callback) => _onCloseCallbackList.add(callback);
 
   @override
-  Listen listen(IsolateSubjectCallback callback) {
+  Listen listen(IsolateSubjectCallback<T> callback) {
     final String id = Uuid().v4();
     _idMapCallback[id] = callback;
     return Listen(() {
@@ -64,7 +64,7 @@ class MainThreadChannel implements ChannelAbstract {
     });
   }
 
-  Map<String, ChannelAbstract> _childChannel = {};
+  Map<String, ChannelAbstract<T>> _childChannel = {};
 
   @override
   void onMessage(Message message) {
@@ -80,7 +80,7 @@ class MainThreadChannel implements ChannelAbstract {
           (() async {
             try {
               final String childChannelId = Uuid().v4();
-              ChannelAbstract channel = MainThreadChannel(sendPort: _sendPort, name: name, channelId: channelId);
+              ChannelAbstract<T> channel = MainThreadChannel(sendPort: _sendPort, name: name, channelId: channelId);
               channel.onClose((name) {
                 _childChannel.removeWhere((key, value) => key == childChannelId);
               });
