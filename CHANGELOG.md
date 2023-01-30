@@ -79,3 +79,6 @@
 ## 0.0.24
 
 - feat: add channel name feature.
+
+## 0.0.25
+- chore: update pubspec.yaml.
